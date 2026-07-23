@@ -7,13 +7,14 @@ import java.util.List;
 
 public class DirectoryCreator {
 
-    private static final String GENERAL_PATH = "C:\\Users\\5beng\\Netology\\Games";
+    private static final String GENERAL_PATH = "C:\\Users\\user\\IdeaProjects\\I-O-streams.-Working-with-files";
     private static final String LOG_FILE = GENERAL_PATH + "\\temp\\temp.txt";
 
     public static void main(String[] args) {
         StringBuilder log = new StringBuilder();
 
-        ArrayList<String> directories = new ArrayList<>(List.of(
+        ArrayList<String> directories;
+        directories = new ArrayList<>(List.of(
                 GENERAL_PATH + "\\temp",
                 GENERAL_PATH + "\\src\\main",
                 GENERAL_PATH + "\\src\\test",
@@ -24,7 +25,7 @@ public class DirectoryCreator {
         ));
 
         for (String path : directories) {
-            log.append(createDirectory(path)).append("\n");
+            createDirectory(path, log);
         }
 
         List<String[]> files = List.of(
@@ -36,35 +37,44 @@ public class DirectoryCreator {
         for (String[] fileInfo : files) {
             String dirPath = fileInfo[0];
             String fileName = fileInfo[1];
-            log.append(createFile(dirPath, fileName)).append("\n");
+            createFile(dirPath, fileName, log);
         }
 
         writeLogToFile(log.toString());
     }
 
-    public static String createDirectory(String path) {
+    // создаем директорию с логированием
+    public static void createDirectory(String path, StringBuilder log) {
         File directory = new File(path);
         if (directory.exists()) {
-            return "Директория уже существует: " + path;
+            log.append("Директория уже существует: ").append(path).append("\n");
+            return;
         }
         boolean created = directory.mkdirs();
-        return created
-                ? "Директория успешно создана: " + path
-                : "Не удалось создать директорию: " + path;
+        if (created) {
+            log.append("Директория успешно создана: ").append(path).append("\n");
+        } else {
+            log.append("Не удалось создать директорию: ").append(path).append("\n");
+        }
     }
 
-    public static String createFile(String path, String fileName) {
+    // создаем файл с логированием
+    public static void createFile(String path, String fileName, StringBuilder log) {
         File file = new File(path, fileName);
         if (file.exists()) {
-            return "Файл уже существует: " + file.getAbsolutePath();
+            log.append("Файл уже существует: ").append(file.getAbsolutePath()).append("\n");
+            return;
         }
         try {
             boolean created = file.createNewFile();
-            return created
-                    ? "Файл успешно создан: " + file.getAbsolutePath()
-                    : "Не удалось создать файл: " + file.getAbsolutePath();
+            if (created) {
+                log.append("Файл успешно создан: ").append(file.getAbsolutePath()).append("\n");
+            } else {
+                log.append("Не удалось создать файл: ").append(file.getAbsolutePath()).append("\n");
+            }
         } catch (IOException e) {
-            return "Ошибка при создании файла " + file.getAbsolutePath() + ". Причина: " + e.getMessage();
+            log.append("Ошибка при создании файла ").append(file.getAbsolutePath())
+                    .append(". Причина: ").append(e.getMessage()).append("\n");
         }
     }
 
